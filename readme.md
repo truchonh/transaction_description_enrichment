@@ -12,11 +12,8 @@ Les tâches à exécuter sont les suivantes:
 - [2] Récupération des données local sur les entitées connue
 - [3] Recherche d'information sur les entitées non connue avec l'api de recherche de DuckDuckGo
 
-Ordre d'exécution:
-[1] -> ([2] || [3])
-
-## Utilisation de worker pour les traitements en batch
-Le module pourra aussi recevoir une liste de description. Les descriptions sont placé dans une file d'attente et sont traité en parallèle par plusieurs workers.
+### Traitement en batch
+Les traitements seront divisé en deux 'pool'. Le premier...
 
 ## Exemple d'entré / sortie
 description: "AMZN Mktp CA*M656S0FL2 WWW.AMAZON.CAON"
@@ -28,6 +25,40 @@ reponse: {
   "amazon": {
     "type": "entreprise",
     "description": "Amazon.com, Inc. (NASDAQ : AMZN7) est une entreprise de commerce électronique nord-américaine basée à Seattle. Elle est un des géants du Web, regroupés sous l'acronyme GAFAM8, aux côtés de Google, Apple, Facebook et Microsoft."
+  }
+}
+```
+
+## Idée générale de l'algorithme principal
+```
+/*******************************************************************************
+Algorithme naif pour l'extraction d'information.
+
+À noter que tout le traitement est séquentiel et pour traiter plusieurs 
+description, il faut appeler la fonction plusieurs fois séquentiellement.
+*******************************************************************************/
+
+function parseDescription(description) {
+  // Pré-traitement pour retirer les numéros de sucursale, no de téléphone, et
+  // autre pattern récurant qui ne sont pas pertinant.
+  let processedDescription = preProcess(description);
+
+  // Appel à l'IA (Stanford Named Entity Recognizer).
+  let entities = NER.parse(processedDescription);
+
+  // Récupération des informations de la bdd ou du web.
+  for (let entity of entities) {
+    if (entity.type === 'organization') {
+      let dbInfo = db.organization.find(entity.name);
+      
+      if (dbInfo === null) {
+        let webInfo = duckDuckGo.search(entity.name);
+        db.organization.insert(webInfo);
+        return webInfo;
+      } else {
+        return dbInfo;
+      }
+    }
   }
 }
 ```
