@@ -20,7 +20,7 @@ description: "AMZN Mktp CA*M656S0FL2 WWW.AMAZON.CAON"
 
 entitées: ["Amazon"]
 
-```
+```json
 reponse: {
   "amazon": {
     "type": "entreprise",
@@ -30,7 +30,7 @@ reponse: {
 ```
 
 ## Idée générale de l'algorithme principal
-```
+```javascript
 /*******************************************************************************
 Algorithme naif pour l'extraction d'information.
 
