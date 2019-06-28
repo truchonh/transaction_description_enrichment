@@ -10,7 +10,7 @@ Le programme principal sera écrit en javascript et la coordination des sous-pro
 Les tâches à exécuter sont les suivantes:
 - [1] Détection des entités avec le NER
 - [2] Récupération des données local sur les entitées connue
-- [3] Recherche d'information sur les entitées non connue (Wikipedia, Google)
+- [3] Recherche d'information sur les entitées non connue avec l'api de recherche de DuckDuckGo
 
 Ordre d'exécution:
 [1] -> ([2] || [3])
@@ -20,10 +20,13 @@ Le module pourra aussi recevoir une liste de description. Les descriptions sont 
 
 ## Exemple d'entré / sortie
 description: "AMZN Mktp CA*M656S0FL2 WWW.AMAZON.CAON"
+
 entitées: ["Amazon"]
-reponse: {
+
+```reponse: {
   "amazon": {
     "type": "entreprise",
     "description": "Amazon.com, Inc. (NASDAQ : AMZN7) est une entreprise de commerce électronique nord-américaine basée à Seattle. Elle est un des géants du Web, regroupés sous l'acronyme GAFAM8, aux côtés de Google, Apple, Facebook et Microsoft."
   }
 }
+```
