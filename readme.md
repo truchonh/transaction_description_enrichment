@@ -23,7 +23,8 @@ description: "AMZN Mktp CA*M656S0FL2 WWW.AMAZON.CAON"
 
 entitées: ["Amazon"]
 
-```reponse: {
+```
+reponse: {
   "amazon": {
     "type": "entreprise",
     "description": "Amazon.com, Inc. (NASDAQ : AMZN7) est une entreprise de commerce électronique nord-américaine basée à Seattle. Elle est un des géants du Web, regroupés sous l'acronyme GAFAM8, aux côtés de Google, Apple, Facebook et Microsoft."
