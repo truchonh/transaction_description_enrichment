@@ -53,6 +53,7 @@ reponse: {
 ```
 
 ## Idée générale de l'algorithme principal
+L'algorithme ci-dessous est le point de départ. Les performances du programme final seront comparé à celui-ci.
 ```javascript
 /*******************************************************************************
 Algorithme naif pour l'extraction d'information.
