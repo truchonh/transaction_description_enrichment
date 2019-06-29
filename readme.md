@@ -1,4 +1,4 @@
-# Module d'enrichissement de description de transaction bancaire par l'utilisation du Stanford Named Entity Recognizer (NER)
+# Module d'enrichissement de description de transaction bancaire
 Projet final du cours IFT630 par Hugo Truchon.
 
 ## Mise en contexte
