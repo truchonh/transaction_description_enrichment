@@ -33,7 +33,7 @@ Les grandes étapes à exécuter sont les suivantes:
 ### Traitement en batch
 L'idée est de diviser les traitements en deux file d'attente et de wrapper chaque description de transaction dans un objet Job qui progressera d'une file à l'autre. D'abord, un certain nombre de worker feront les appels au NER [1] et placeront au fur et à mesure les résultats dans la seconde file. Dans le thread principal, à mesure que des éléments sont ajouté à la 2ieme file de traitement, des appels à l'api DuckDuckGo [2] seront effectué de façon asynchrone avec des promesses Javascript. Voir le diagramme ci-bas.
 
-[diagrame draw.io des traitements parallèles]
+![File d'execution](https://github.com/truchonh/transaction_description_enrichment/blob/master/File_execution.png)
 
 ## Exemple d'entré / sortie
 description: "AMZN Mktp CA*M656S0FL2 WWW.AMAZON.CAON"
@@ -66,18 +66,11 @@ function parseDescription(description) {
   // Appel à l'IA (Stanford Named Entity Recognizer).
   let entities = NER.parse(processedDescription);
 
-  // Récupération des informations de la bdd ou du web.
+  // Récupération d'informations du web.
   for (let entity of entities) {
     if (entity.type === 'organization') {
-      let dbInfo = db.organization.find(entity.name);
-      
-      if (dbInfo === null) {
-        let webInfo = duckDuckGo.search(entity.name);
-        db.organization.insert(webInfo);
-        return webInfo;
-      } else {
-        return dbInfo;
-      }
+      let webInfo = duckDuckGo.search(entity.name);
+      return webInfo;
     }
   }
 }
