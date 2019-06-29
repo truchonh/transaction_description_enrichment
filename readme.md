@@ -1,37 +1,39 @@
-# Module d'enrichissement de description de transaction bancaire en parallèle utilisant le "Stanford Named Entity Recognizer (NER)"
+# Module d'enrichissement de description de transaction bancaire par l'utilisation du Stanford Named Entity Recognizer (NER)
 Projet final du cours IFT630
 
 ## Mise en contexte
-L'objectif de ce projet est de réaliser un algorithme qui prend en entrée des descriptions de transactions bancaire (telles qu'ils apparaissent sur un relevé de carte de guichet / carte de crédit) et retourne à l'utilisateur des informations pertinantes extraite de ces descriptions (infos sur l'entreprise, numéro de sucursale, numéro de téléphone). Cette algorithme sera principalement appelé avec des lots de données (typiquement 10 à 50 entrées unique) et le tout devra se faire en temps réel.
+L'objectif de ce projet est de réaliser un algorithme qui prend en entrée des descriptions de transactions bancaire (telles qu'ils apparaissent sur un relevé de carte de guichet / carte de crédit) et retourne à l'utilisateur des informations pertinantes extraite de ces descriptions (infos sur l'entreprise, numéro de sucursale, numéro de téléphone).
 
 Pour ce faire, l'algorithme combinera les résultats de deux outils : 
-- Le Stanford Named Entity Recognizer, un programme utilisant l'intelligense artificiel pour reconnaitre des entitées (entreprise, lieu, personne) dans une chaine de texte.
+- Le Stanford Named Entity Recognizer, un programme utilisant l'intelligence artificiel pour reconnaitre des entitées (entreprise, lieu, personne) dans une chaine de texte.
 - L'api de recherche de DuckDuckGo, qui permet d'obtenir des snippets d'information de sources variées pour des entitées connues.
 
-L'utilisation des concepts de parallélisme seront centré sur ces deux outils. Le premier utilisant beaucoup de temps CPU poura être distribué sur plusieurs thread et le deuxième nécessite l'attente de la réponse de l'api et pourra être géré à l'aide de promesse Javascript.
+L'utilisation des concepts de parallélisme sont centré sur ces deux outils. Le premier utilise beaucoup de temps CPU sera distribué sur plusieurs thread et le deuxième nécessite l'attente de la réponse de l'api et sera géré à l'aide de promesse Javascript.
 
-## Problèmes potentiels
-
+## Technologies utilisés
+L'algorithme sera programmer en Javascript pour être exécuter dans Nodejs. Ce langage fournis plusieurs outils pour rendre du code concurant (promesse, child process de Nodejs) et il est facile de travailler avec des api web avec ce langage.
 
 ## Description des hypothèses
+En principe, la version de l'algorithme utilisant le parallélisme sera beaucoup plus rapide. Par contre, comme une partie du traitement repose sur un api externe (api DuckDuckGo pour la recherche), il est fort probable qu'il y ai beaucoup de variabilité dans les résultats. L'utilisation d'un langage de haut niveau (JS) aura probablement aussi un impact mineur sur la variabilité.
 
+## Problèmes potentiels
+Tout d'abord, les appels fréquent à l'api de recherche de DuckDuckGo causera peut-être des difficultés. Ces dernier indique dans leur documentation que le nombre de requête à l'api est restrain, ce qui devra surment être mitiguer en créent un délais entre les reqêtes quand il y en a beaucoup.
+
+Aussi, l'utilisation en multithread du Named Entity Recognizer sera surment un défis étant donnée qu'il sera appelé à partir d'un programme en Javascript. Une lecture de la documentation de Nodejs laisse entrevoir qu'il est possible d'exécuter du JS sur plusieurs thread, mais plus d'expérimentation sera nécessaire.
+
+Finalement, le Named Entity Recognizer n'est pas exactement fait pour fonctionner avec le type de description un peut cryptique qui apparait sur les relevés bancaire. Ça demandera de jouer avec la configuration de l'outil et de bien choisir le modèle d'AI pré-entrainé parmis ceux mis à disposition par Standford.
 
 ## Aspect de parallélisme en détail
 Le programme principal sera écrit en javascript et la coordination des sous-programmes sera gérer de façon asynchrone.
 
-Les tâches à exécuter sont les suivantes:
+Les grandes étapes à exécuter sont les suivantes:
 - [1] Détection des entités avec le NER
-- [2] Récupération des données local sur les entitées connue
-- [3] Recherche d'information sur les entitées non connue avec l'api de recherche de DuckDuckGo
+- [2] Recherche d'information sur les entitées avec l'api de recherche de DuckDuckGo
 
 ### Traitement en batch
-Les deux étapes les plus couteuse en traitement/temps sont [1] l'appel au NER et [3] la requête au moteur de recherche DuckDuckGo. 
-
-L'idée est de diviser les traitements en deux file d'attente et de wrapper chaque description de transaction dans un objet Job qui progressera d'une file à l'autre. D'abord, un certain nombre de worker feront les appels au NER et placeront au fur et à mesure les résultats dans la seconde file. Dans le thread principal, à mesure que des éléments sont ajouté à la 2ieme file de traitement, des appels à l'api DuckDuckGo seront effectué de façon asynchrone avec des promesses Javascript. Voir le diagramme ci-bas.
+L'idée est de diviser les traitements en deux file d'attente et de wrapper chaque description de transaction dans un objet Job qui progressera d'une file à l'autre. D'abord, un certain nombre de worker feront les appels au NER [1] et placeront au fur et à mesure les résultats dans la seconde file. Dans le thread principal, à mesure que des éléments sont ajouté à la 2ieme file de traitement, des appels à l'api DuckDuckGo [2] seront effectué de façon asynchrone avec des promesses Javascript. Voir le diagramme ci-bas.
 
 [diagrame draw.io des traitements parallèles]
-
-
 
 ## Exemple d'entré / sortie
 description: "AMZN Mktp CA*M656S0FL2 WWW.AMAZON.CAON"
