@@ -1,0 +1,25 @@
+{
+  "name": "transaction_description_enrichment",
+  "version": "1.0.0",
+  "description": "Projet IFT630",
+  "main": "app.js",
+  "dependencies": {
+    "axios": "^0.19.0",
+    "ner": "^1.0.0",
+    "ner-server": "^2.0.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/truchonh/transaction_description_enrichment.git"
+  },
+  "author": "Hugo Truchon",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/truchonh/transaction_description_enrichment/issues"
+  },
+  "homepage": "https://github.com/truchonh/transaction_description_enrichment#readme"
+}
